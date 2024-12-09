@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 typedef ShowItemPropertyInDropDown<T> = String Function(T item);
 
-class CustomTextField<T> extends StatefulWidget {
+class CustomDropdownField<T> extends StatefulWidget {
   final List<T> items;
   final T? selectedItem;
   final ShowItemPropertyInDropDown<T>? itemAsString;
   final Color? dropDownColor;
-  const CustomTextField(
+  const CustomDropdownField(
       {super.key,
       required this.items,
       this.itemAsString,
@@ -15,10 +15,10 @@ class CustomTextField<T> extends StatefulWidget {
       this.dropDownColor});
 
   @override
-  State<CustomTextField<T>> createState() => _CustomTextFieldState<T>();
+  State<CustomDropdownField<T>> createState() => _CustomDropdownFieldState<T>();
 }
 
-class _CustomTextFieldState<T> extends State<CustomTextField<T>> {
+class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
   OverlayEntry? entry;
   final layerLink = LayerLink();
   FocusNode node = FocusNode();
@@ -195,7 +195,6 @@ class _CustomTextFieldState<T> extends State<CustomTextField<T>> {
                   Icons.arrow_drop_down,
                   color: Colors.black,
                 ),
-                // DropdownSearch()
               ],
             ),
           ),

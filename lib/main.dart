@@ -1,4 +1,4 @@
-import 'package:drop_down/textfield.dart';
+import 'package:drop_down/custom_dropdown.dart';
 import 'package:drop_down/user_model.dart';
 import 'package:flutter/material.dart';
 
@@ -47,10 +47,10 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-          child: CustomTextField<User>(
+          child: CustomDropdownField<User>(
         items: user,
         dropDownColor: Colors.grey,
-        selectedItem: user[3],
+        selectedItem: User(id: '98', name: 'name is 98'),
         itemAsString: (item) => item.name,
       )),
       // This trailing comma makes auto-formatting nicer for build methods.
