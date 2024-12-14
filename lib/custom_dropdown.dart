@@ -25,6 +25,7 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
   TextEditingController txt = TextEditingController();
   T? selectedItem;
   bool overlayShown = false;
+  int tapCounter = 0;
 
   @override
   void dispose() {
@@ -58,6 +59,11 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
     final overlay = Overlay.of(context);
     final renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
+    const overlayHeight = 200.0;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final widgetPosition = renderBox.localToGlobal(Offset.zero);
+    bool showAbove =
+        (screenHeight - widgetPosition.dy - size.height) < overlayHeight;
     entry = OverlayEntry(
       builder: (context) {
         return Positioned(
@@ -65,7 +71,9 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
           child: CompositedTransformFollower(
               link: layerLink,
               showWhenUnlinked: false,
-              offset: Offset(0, size.height),
+              offset: showAbove
+                  ? const Offset(0, -overlayHeight)
+                  : Offset(0, size.height),
               child: buildOverlay()),
         );
       },
@@ -81,63 +89,58 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
         hideOverlay();
         overlayShown = false;
       },
-      child: Container(
-        height: 200,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        decoration: BoxDecoration(
-          color: widget.dropDownColor,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Column(
-          children: [
-            Expanded(
-              child: Material(
-                color: widget.dropDownColor,
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  itemCount: widget.items.length,
-                  itemBuilder: (context, index) {
-                    T item = widget.items[index];
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: ListTile(
-                            onTap: () {
-                              onValSelected(item);
-                            },
-                            title: Text(widget.itemAsString != null
-                                ? widget.itemAsString!(item)
-                                : item.toString()),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => onValSelected(item),
-                          child: Container(
-                            padding: const EdgeInsets.all(1),
-                            width: 20,
-                            height: 20,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.black,
-                                    width: 1,
-                                    style: BorderStyle.solid)),
-                            child: selectedItem == item
-                                ? const Icon(
-                                    Icons.check,
-                                    color: Colors.black,
-                                    size: 15,
-                                  )
-                                : null,
-                          ),
-                        )
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
+      child: Material(
+        elevation: 8,
+        child: Container(
+          height: 200,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          decoration: BoxDecoration(
+            color: widget.dropDownColor,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: ListView.builder(
+            // padding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            itemCount: widget.items.length,
+            itemBuilder: (context, index) {
+              T item = widget.items[index];
+              return Row(
+                children: [
+                  Expanded(
+                    child: ListTile(
+                      onTap: () {
+                        onValSelected(item);
+                      },
+                      title: Text(widget.itemAsString != null
+                          ? widget.itemAsString!(item)
+                          : item.toString()),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => onValSelected(item),
+                    child: Container(
+                      padding: const EdgeInsets.all(1),
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.black,
+                              width: 1,
+                              style: BorderStyle.solid)),
+                      child: selectedItem == item
+                          ? const Icon(
+                              Icons.check,
+                              color: Colors.black,
+                              size: 15,
+                            )
+                          : null,
+                    ),
+                  )
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -165,6 +168,12 @@ class _CustomDropdownFieldState<T> extends State<CustomDropdownField<T>> {
       link: layerLink,
       child: GestureDetector(
         onTap: () {
+          tapCounter++;
+          if (tapCounter % 2 == 0) {
+            overlayShown = false;
+            hideOverlay();
+            return;
+          }
           if (overlayShown == false) {
             // node.requestFocus();
             showOverlay();

@@ -46,14 +46,22 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-          child: CustomDropdownField<User>(
-        items: user,
-        dropDownColor: Colors.grey,
-        selectedItem: User(id: '98', name: 'name is 98'),
-        itemAsString: (item) => item.name,
-      )),
-      // This trailing comma makes auto-formatting nicer for build methods.
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Expanded(child: SizedBox()),
+          Center(
+            child: CustomDropdownField<User>(
+              items: user,
+              dropDownColor: Colors.white,
+              selectedItem: User(id: '98', name: 'name is 98'),
+              itemAsString: (item) => item.name,
+            ),
+          ),
+          const Expanded(child: SizedBox()),
+        ],
+      ),
     );
   }
 }
